@@ -1,9 +1,9 @@
 trigger:
   - main  # Runs when changes are pushed to the "main" branch
-
+ 
 pool:
-  name: tools  # Use your self-hosted agent pool
-
+  name: MyPool  # Use your self-hosted agent pool
+ 
 steps:
   # Step 1: Install Python 3.9 using Chocolatey
   - script: |
@@ -12,29 +12,18 @@ steps:
       python --version  # Check Python version to ensure it's installed
       where python  # Check if Python is available in PATH
     displayName: 'Install Python'
-
-  # Step 2: Create the virtual environment
+ 
   - script: |
-      echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
-      dir venv  # List the directory contents to ensure 'venv' folder is created
-      dir .\venv\Scripts  # List the Scripts folder to verify if activate.ps1 is there
-    displayName: 'Create Virtual Environment'
-
-  # Step 3: Activate the virtual environment and install dependencies using PowerShell
-  - script: |
-      echo "Activating virtual environment using PowerShell"
-      # Run the script using PowerShell to ensure the virtual environment is activated
-      powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope Process; .\venv\Scripts\Activate.ps1"
-      echo "Virtual environment activated"
-      pip --version  # Verify pip version after activation
-      pip install --upgrade pip  # Upgrade pip
-      pip install pytest  # Install pytest
+      .\venv\Scripts\activate  # Activate the virtual environment (Windows)
+      pip install --upgrade pip  # Upgrade pip to the latest version
+      pip install pytest  # Install pytest (or other packages you need)
     displayName: 'Install Dependencies'
-
-  # Step 4: Run tests in the activated environment
+ 
   - script: |
-      echo "Running tests"
-      powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope Process; .\venv\Scripts\Activate.ps1"
-      pytest tests/  # Run tests after activation
+      .\venv\Scripts\activate  # Ensure the virtual environment is activated (Windows)
+      pytest tests/  # Run tests
     displayName: 'Run Tests'
+ 
+ 
+
