@@ -1,3 +1,5 @@
+
+ 
 trigger:
   - main  # Runs when changes are pushed to the "main" branch
  
@@ -7,25 +9,29 @@ pool:
 steps:
   - script: |
       echo "Installing Python 3.9"
-      choco install python --version 3.9 -y
+      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey
     displayName: 'Install Python'
- 
+  
   - script: |
+      echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
       # Activate the virtual environment based on the platform
       if [ "$(OS)" == "Windows_NT" ]; then
-          .\venv\Scripts\activate  # Activate for Windows
+          .\venv\Scripts\activate  # Windows activation
       else
-          source venv/bin/activate  # Activate for Linux/macOS
+          source venv/bin/activate  # Linux/macOS activation
       fi
       pip install --upgrade pip  # Upgrade pip to the latest version
       pip install pytest  # Install pytest (or other packages you need)
     displayName: 'Install Dependencies'
 
-
- 
   - script: |
-      .\venv\Scripts\activate  # Ensure the virtual environment is activated (Windows)
-      pytest tests/  # Run tests
+      # Ensure the virtual environment is activated and run tests
+      if [ "$(OS)" == "Windows_NT" ]; then
+          .\venv\Scripts\activate  # Windows activation
+          pytest tests/  # Run tests
+      else
+          source venv/bin/activate  # Linux/macOS activation
+          pytest tests/  # Run tests
+      fi
     displayName: 'Run Tests'
- 
