@@ -8,28 +8,33 @@ steps:
   # Step 1: Install Python 3.9 (Windows-specific)
   - script: |
       echo "Installing Python 3.9"
-      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey
-      python --version  # Verify Python installation
+      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey (Windows-specific)
+      python --version  # Check Python version to ensure it's installed
+      where python  # Check if Python is available in PATH
     displayName: 'Install Python'
 
   # Step 2: Create the virtual environment
   - script: |
       echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
-      dir venv  # List the virtual environment directory contents to ensure it's created
+      dir venv  # List the directory contents to ensure the 'venv' folder is created
+      dir .\venv\Scripts  # List Scripts folder to verify if activate.bat is there
     displayName: 'Create Virtual Environment'
 
-  # Step 3: Activate virtual environment and install dependencies
+  # Step 3: Activate the virtual environment and install dependencies
   - script: |
       echo "Activating virtual environment"
       if [ "$(OS)" == "Windows_NT" ]; then
           echo "Activating virtual environment for Windows..."
-          call .\venv\Scripts\activate.bat  # Correct activation for Windows CMD
+          call .\venv\Scripts\activate.bat  # Activate for Windows CMD (using 'call' for persistence)
       else
           echo "Activating virtual environment for Linux/macOS..."
-          source venv/bin/activate  # Activation for Linux/macOS
+          source venv/bin/activate  # Activate for Linux/macOS
       fi
-      echo "Installing dependencies (pip install pytest)"
+
+      # Check if pip is working and install dependencies
+      echo "Checking if pip is available"
+      pip --version  # Verify pip version after activation
       pip install --upgrade pip  # Upgrade pip
       pip install pytest  # Install pytest
     displayName: 'Install Dependencies'
