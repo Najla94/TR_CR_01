@@ -12,10 +12,16 @@ steps:
  
   - script: |
       python -m venv venv  # Create a virtual environment
-      source venv/bin/activate  # Activate the virtual environment (Linux/macOS)
+      # Activate the virtual environment based on the platform
+      if [ "$(OS)" == "Windows_NT" ]; then
+          .\venv\Scripts\activate  # Activate for Windows
+      else
+          source venv/bin/activate  # Activate for Linux/macOS
+      fi
       pip install --upgrade pip  # Upgrade pip to the latest version
       pip install pytest  # Install pytest (or other packages you need)
     displayName: 'Install Dependencies'
+
 
  
   - script: |
