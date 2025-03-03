@@ -5,40 +5,41 @@ pool:
   name: tools  # Use your self-hosted agent pool
 
 steps:
+  # Step 1: Install Python 3.9 (Windows-specific)
   - script: |
       echo "Installing Python 3.9"
-      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey (Windows-specific)
-      python --version  # Check Python version to ensure it's installed
+      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey
+      python --version  # Verify Python installation
     displayName: 'Install Python'
 
+  # Step 2: Create the virtual environment
   - script: |
       echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
-      dir venv  # List the directory to verify creation of the venv folder
-      echo "Virtual environment created successfully!"
+      dir venv  # List the virtual environment directory contents to ensure it's created
     displayName: 'Create Virtual Environment'
 
+  # Step 3: Activate virtual environment and install dependencies
   - script: |
-      echo "Activating virtual environment and installing dependencies"
-      # Check if the OS is Windows
+      echo "Activating virtual environment"
       if [ "$(OS)" == "Windows_NT" ]; then
           echo "Activating virtual environment for Windows..."
-          call .\venv\Scripts\activate.bat  # Use call to properly activate the virtual environment on Windows
+          call .\venv\Scripts\activate.bat  # Correct activation for Windows CMD
       else
           echo "Activating virtual environment for Linux/macOS..."
-          source venv/bin/activate  # Activate for Linux/macOS
+          source venv/bin/activate  # Activation for Linux/macOS
       fi
-      pip --version  # Verify pip is available after activation
+      echo "Installing dependencies (pip install pytest)"
       pip install --upgrade pip  # Upgrade pip
       pip install pytest  # Install pytest
     displayName: 'Install Dependencies'
 
+  # Step 4: Run tests in the activated environment
   - script: |
       echo "Running tests"
-      # Ensure the virtual environment is activated and run tests
       if [ "$(OS)" == "Windows_NT" ]; then
           echo "Activating virtual environment for Windows..."
-          call .\venv\Scripts\activate.bat  # Use call to activate for Windows
+          call .\venv\Scripts\activate.bat  # Activate for Windows
           pytest tests/  # Run tests
       else
           echo "Activating virtual environment for Linux/macOS..."
