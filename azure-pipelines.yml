@@ -1,37 +1,40 @@
-
- 
 trigger:
   - main  # Runs when changes are pushed to the "main" branch
- 
+
 pool:
   name: tools  # Use your self-hosted agent pool
- 
+
 steps:
   - script: |
       echo "Installing Python 3.9"
-      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey
+      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey (Windows-specific)
     displayName: 'Install Python'
-  
+
   - script: |
       echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
-      # Activate the virtual environment based on the platform
+    displayName: 'Create Virtual Environment'
+
+  - script: |
+      echo "Activating virtual environment and installing dependencies"
+      # Check the operating system and activate the virtual environment accordingly
       if [ "$(OS)" == "Windows_NT" ]; then
-          .\venv\Scripts\activate  # Windows activation
+          .\venv\Scripts\activate  # Activate for Windows
       else
-          source venv/bin/activate  # Linux/macOS activation
+          source venv/bin/activate  # Activate for Linux/macOS
       fi
-      pip install --upgrade pip  # Upgrade pip to the latest version
-      pip install pytest  # Install pytest (or other packages you need)
+      pip install --upgrade pip  # Upgrade pip
+      pip install pytest  # Install pytest
     displayName: 'Install Dependencies'
 
   - script: |
+      echo "Running tests"
       # Ensure the virtual environment is activated and run tests
       if [ "$(OS)" == "Windows_NT" ]; then
-          .\venv\Scripts\activate  # Windows activation
+          .\venv\Scripts\activate  # Activate for Windows
           pytest tests/  # Run tests
       else
-          source venv/bin/activate  # Linux/macOS activation
+          source venv/bin/activate  # Activate for Linux/macOS
           pytest tests/  # Run tests
       fi
     displayName: 'Run Tests'
