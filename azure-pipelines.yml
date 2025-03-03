@@ -7,7 +7,8 @@ pool:
 steps:
   - script: |
       echo "Installing Python 3.9"
-      choco install python --version 3.9 -y
+      choco install python --version 3.9 -y  # Install Python 3.9 using Chocolatey (Windows-specific)
+      python --version  # Check Python version to ensure it's installed
     displayName: 'Install Python'
  
   - script: |
