@@ -1,0 +1,24 @@
+trigger:
+  - main  # Runs when changes are pushed to the "main" branch
+ 
+pool:
+  name: tools  # Use your self-hosted agent pool
+ 
+steps:
+  - script: |
+      echo "Installing Python 3.9"
+      choco install python --version 3.9 -y
+    displayName: 'Install Python'
+ 
+  - script: |
+      python -m venv venv  # Create a virtual environment
+      .\venv\Scripts\activate  # Activate the virtual environment (Windows)
+      pip install --upgrade pip  # Upgrade pip to the latest version
+      pip install pytest  # Install pytest (or other packages you need)
+    displayName: 'Install Dependencies'
+ 
+  - script: |
+      .\venv\Scripts\activate  # Ensure the virtual environment is activated (Windows)
+      pytest tests/  # Run tests
+    displayName: 'Run Tests'
+ 
