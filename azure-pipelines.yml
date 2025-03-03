@@ -14,23 +14,21 @@ steps:
   - script: |
       echo "Creating virtual environment"
       python -m venv venv  # Create a virtual environment
-      echo "Virtual environment created successfully!"
       dir venv  # List the directory to verify creation of the venv folder
+      echo "Virtual environment created successfully!"
     displayName: 'Create Virtual Environment'
 
   - script: |
       echo "Activating virtual environment and installing dependencies"
-      # Check the operating system and activate the virtual environment accordingly
+      # Check if the OS is Windows
       if [ "$(OS)" == "Windows_NT" ]; then
           echo "Activating virtual environment for Windows..."
-          .\venv\Scripts\activate  # Activate for Windows
+          call .\venv\Scripts\activate.bat  # Use call to properly activate the virtual environment on Windows
       else
           echo "Activating virtual environment for Linux/macOS..."
           source venv/bin/activate  # Activate for Linux/macOS
       fi
-
-      # Verify if pip is available and then install dependencies
-      pip --version  # Verify pip is working
+      pip --version  # Verify pip is available after activation
       pip install --upgrade pip  # Upgrade pip
       pip install pytest  # Install pytest
     displayName: 'Install Dependencies'
@@ -40,7 +38,7 @@ steps:
       # Ensure the virtual environment is activated and run tests
       if [ "$(OS)" == "Windows_NT" ]; then
           echo "Activating virtual environment for Windows..."
-          .\venv\Scripts\activate  # Activate for Windows
+          call .\venv\Scripts\activate.bat  # Use call to activate for Windows
           pytest tests/  # Run tests
       else
           echo "Activating virtual environment for Linux/macOS..."
